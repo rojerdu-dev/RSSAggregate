@@ -19,7 +19,13 @@ type apiConfig struct {
 }
 
 func main() {
-	fmt.Println("RSSAggregate project begin")
+	//fmt.Println("RSSAggregate project begin")
+
+	feed, err := urlToFeed("http://wagslane.dev/index.xml")
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(feed)
 
 	godotenv.Load(".env")
 
