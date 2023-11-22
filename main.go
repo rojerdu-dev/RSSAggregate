@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"os"
 	"rssaggregate/internal/database"
+	"time"
 
 	_ "github.com/lib/pq"
 )
@@ -19,7 +20,6 @@ type apiConfig struct {
 }
 
 func main() {
-	//fmt.Println("RSSAggregate project begin")
 
 	feed, err := urlToFeed("http://wagslane.dev/index.xml")
 	if err != nil {
@@ -44,7 +44,12 @@ func main() {
 		log.Fatal("Cannot connect to database:", err)
 	}
 
-	apiCfg := apiConfig{DB: database.New(conn)}
+	db := database.New(conn)
+	apiCfg := apiConfig{
+		DB: db,
+	}
+
+	go startScraping(db, 10, time.Minute)
 
 	router := chi.NewRouter()
 
